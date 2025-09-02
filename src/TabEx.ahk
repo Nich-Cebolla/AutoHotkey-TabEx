@@ -39,10 +39,13 @@ class TabEx extends Gui.Tab {
     }
 
     /**
-     * Converts an existing `Gui.Tab` object to a {@link TabEx} object.
+     * @param {Gui.Tab} TabCtrl - The `Gui.Tab` object to convert to {@link TabEx}. This sets
+     * `TabCtrl.Base := TabEx.Prototype`.
+     * @returns {TabEx} - The same object but with the base changed.
      */
     static Convert(TabCtrl) {
         ObjSetBase(TabCtrl, this.Prototype)
+        return TabCtrl
     }
 
     static SetConstants() {
