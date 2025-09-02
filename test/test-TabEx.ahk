@@ -53,4 +53,11 @@ class EventHandler {
     HighlightItem(*) {
         test.tab.HighlightItem(test.input1.text, test.input2.text || unset)
     }
+    FindTabRegEx(*) {
+        index := test.tab.FindTabRegEx(test.input1.text, , , , &Match)
+        test.SetResultText('Index: ' index '; Match: ' Match[0])
+    }
+    FindTab(*) {
+        test.SetResultText(test.tab.FindTab(test.input1.text))
+    }
 }

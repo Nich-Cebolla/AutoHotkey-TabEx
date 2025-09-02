@@ -310,6 +310,69 @@ class TabEx extends Gui.Tab {
     }
 
     /**
+     * Returns the index position of the first tab with a label that is the same as the input `Text`.
+     * The index position is 0-based.
+     *
+     * @param {String} Text - The text to compare with the tab labels.
+     * @param {Integer} [StartIndex = 0] - The index at which to begin searching.
+     * @param {Integer} [EndIndex] - The index at which to stop searching. If unset, all tabs beginning
+     * from `StartIndex` are searched.
+     * @param {Boolean} [CaseSensitive] - If true, the search is case sensitive.
+     * @param {Integer} [MaxChars = 100] - The maximum characters to copy to the buffer.
+     * @returns {Integer}
+     */
+    FindTab(Text, StartIndex := 0, EndIndex?, CaseSensitive := false, MaxChars := 100) {
+        if !IsSet(EndIndex) {
+            EndIndex := this.GetItemCount() - 1
+        }
+        tcitem := TCITEMW(TCIF_TEXT, , , , MaxChars)
+        if CaseSensitive {
+            loop EndIndex - StartIndex + 1 {
+                SendMessage(TCM_GETITEMW, StartIndex, tcitem.Ptr, this.hWnd, this.Gui.hWnd)
+                if Text == tcitem.pszText {
+                    return StartIndex
+                }
+                StartIndex++
+            }
+        } else {
+            loop EndIndex - StartIndex + 1 {
+                SendMessage(TCM_GETITEMW, StartIndex, tcitem.Ptr, this.hWnd, this.Gui.hWnd)
+                if Text = tcitem.pszText {
+                    return StartIndex
+                }
+                StartIndex++
+            }
+        }
+    }
+
+    /**
+     * Returns the index position of the first tab with a label that matches with the input `Pattern`.
+     * The index position is 0-based.
+     *
+     * @param {String} Pattern - RegEx pattern.
+     * @param {Integer} [StartIndex = 0] - The index at which to begin searching.
+     * @param {Integer} [EndIndex] - The index at which to stop searching. If unset, all tabs beginning
+     * from `StartIndex` are searched.
+     * @param {Integer} [MaxChars = 100] - The maximum characters to copy to the buffer.
+     * @param {VarRef} [OutMatch] - A variable that will receive the `RegExMatchInfo` object if a
+     * match is found.
+     * @returns {Integer}
+     */
+    FindTabRegEx(Pattern, StartIndex := 0, EndIndex?, MaxChars := 100, &OutMatch?) {
+        if !IsSet(EndIndex) {
+            EndIndex := this.GetItemCount() - 1
+        }
+        tcitem := TCITEMW(TCIF_TEXT, , , , MaxChars)
+        loop EndIndex - StartIndex + 1 {
+            SendMessage(TCM_GETITEMW, StartIndex, tcitem.Ptr, this.hWnd, this.Gui.hWnd)
+            if RegExMatch(tcitem.pszText, Pattern, &OutMatch) {
+                return StartIndex
+            }
+            StartIndex++
+        }
+    }
+
+    /**
      * @description - Adjusts the size and position of the control to produce a display area with
      * the input dimensions. If a value is not provided, the current value is used.
      * @param {Integer} [X] - The x-coordinate.
